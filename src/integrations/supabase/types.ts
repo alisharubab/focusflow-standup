@@ -14,7 +14,146 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      notes: {
+        Row: {
+          created_at: string
+          id: string
+          is_blocker: boolean
+          tag_id: string | null
+          text: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_blocker?: boolean
+          tag_id?: string | null
+          text: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_blocker?: boolean
+          tag_id?: string | null
+          text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "project_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          default_tone: string
+          full_name: string | null
+          id: string
+          job_title: string | null
+          name_in_standup: boolean
+          standup_format: string
+          team_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          default_tone?: string
+          full_name?: string | null
+          id: string
+          job_title?: string | null
+          name_in_standup?: boolean
+          standup_format?: string
+          team_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          default_tone?: string
+          full_name?: string | null
+          id?: string
+          job_title?: string | null
+          name_in_standup?: boolean
+          standup_format?: string
+          team_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_tags: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      standups: {
+        Row: {
+          blockers: string | null
+          created_at: string
+          edited: boolean
+          highlights: string | null
+          id: string
+          raw_note_ids: string[] | null
+          standup_date: string
+          today: string | null
+          tone: string
+          user_id: string
+          yesterday: string | null
+        }
+        Insert: {
+          blockers?: string | null
+          created_at?: string
+          edited?: boolean
+          highlights?: string | null
+          id?: string
+          raw_note_ids?: string[] | null
+          standup_date?: string
+          today?: string | null
+          tone?: string
+          user_id: string
+          yesterday?: string | null
+        }
+        Update: {
+          blockers?: string | null
+          created_at?: string
+          edited?: boolean
+          highlights?: string | null
+          id?: string
+          raw_note_ids?: string[] | null
+          standup_date?: string
+          today?: string | null
+          tone?: string
+          user_id?: string
+          yesterday?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
