@@ -146,7 +146,7 @@ export default function Output() {
             <ArrowLeft size={14} /> Back to notes
           </button>
           <div className="flex items-center gap-2">
-            <FFButton variant="ghost" size="md" onClick={regenerate} loading={regen}>
+            <FFButton variant="ghost" size="md" onClick={() => regenerate()} loading={regen}>
               <RotateCcw size={14} /> Regenerate
             </FFButton>
             <FFButton variant="highlight" size="md" onClick={copy}>
