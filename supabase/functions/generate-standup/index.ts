@@ -46,17 +46,54 @@ serve(async (req) => {
       )
       .join("\n");
 
+    const toneGuide =
+      tone === "casual"
+        ? "conversational, friendly, natural — but still polished"
+        : "professional, clear, confident, full sentences a manager would be proud to read";
+
     const system =
       mode === "weekly"
-        ? `You are an expert at writing concise weekly developer summaries. Tone: ${tone}.${userName ? ` This is for ${userName}.` : ""} Group similar notes. Keep bullets under 18 words. Never invent tasks.`
-        : `You are an expert at writing clear, concise developer standup updates. Tone: ${tone === "casual" ? "conversational, friendly, natural" : "professional, clear, full sentences"}.${userName ? ` This is for ${userName}.` : ""} Never invent tasks. Keep bullets under 15 words.`;
+        ? `You are an expert at writing concise weekly developer summaries. Tone: ${toneGuide}.${userName ? ` This is for ${userName}.` : ""}
+
+CRITICAL REWRITING RULES:
+- DO NOT echo the user's rough notes verbatim or with trivial rephrasing.
+- GENUINELY rewrite each note into a polished, complete sentence using professional engineering vocabulary.
+- Group related notes into a single bullet when possible.
+- Expand terse phrases into clear outcomes (e.g. "fixed login bug" → "Resolved authentication bug affecting the user login flow").
+- Never invent work that isn't grounded in the notes.
+- Each bullet must start with "• " and read as a finished sentence (no fragments).`
+        : `You are an expert at writing clear, polished developer standup updates. Tone: ${toneGuide}.${userName ? ` This is for ${userName}.` : ""}
+
+CRITICAL REWRITING RULES:
+- DO NOT echo the user's rough notes verbatim or with trivial rephrasing — that is a failure.
+- GENUINELY rewrite every note into a clean, complete, professional sentence with proper engineering vocabulary.
+- Examples of the transformation expected:
+  • "fixed login bug" → "• Resolved authentication bug affecting the user login flow."
+  • "pr review for jake" → "• Reviewed Jake's pull request and provided feedback."
+  • "wip dashboard" → "• Continued progress on the dashboard implementation."
+- Combine related notes into a single bullet when sensible.
+- Each bullet starts with "• ", is a complete sentence ending with a period, and reads as something a manager would be proud to see.
+- Never invent tasks not grounded in the notes.`;
+
+    const todayLabel = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+    const yesterdayInstruction = isYTB
+      ? `IMPORTANT — Section assignment:
+- ALL of the notes below were captured TODAY (${todayLabel}). They MUST go into the "today" section.
+- The "yesterday" section must NOT contain any of today's notes.
+- Since no prior-day notes are provided, write a single reasonable inference bullet for "yesterday" such as "• Continued work on ongoing initiatives." or reference a project tag if obvious from today's notes (e.g. "• Continued progress on Frontend tasks."). Keep it to one short bullet.`
+      : `IMPORTANT — Section assignment:
+- ALL notes below were captured TODAY. Put them in the "today" section.
+- The "tomorrow" section should be a brief, reasonable forward-looking bullet (e.g. "• Continue work on in-progress items and address open blockers.").`;
 
     const user = `Convert these rough notes into a structured standup.
-Notes marked [BLOCKER] go in the blockers section.
+Notes marked [BLOCKER] go ONLY in the blockers section (do not duplicate them in today/yesterday).
 For each section, return bullet points joined by newlines, each starting with "• ".
-If a section has no content, return a brief sensible empty state line.
+If a section truly has no content, write a brief sensible single-line empty state.
 
-Notes:
+${yesterdayInstruction}
+
+Today's raw notes:
 ${noteLines}`;
 
     const tool = {
