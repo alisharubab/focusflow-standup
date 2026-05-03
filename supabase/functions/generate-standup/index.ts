@@ -48,8 +48,17 @@ serve(async (req) => {
 
     const toneGuide =
       tone === "casual"
-        ? "conversational, friendly, natural — but still polished"
-        : "professional, clear, confident, full sentences a manager would be proud to read";
+        ? `CASUAL TONE — write like a developer chatting in Slack with their team:
+- Use contractions ("I've", "didn't", "couldn't", "we're").
+- Use relaxed verbs like "wrapped up", "knocked out", "got blocked on", "poked at", "hopped on", "working on", "shipped".
+- Keep sentences short and punchy. First-person is fine ("I", "we").
+- Friendly and human — no corporate jargon, no stiff phrasing like "Furthermore" or "Subsequently".
+- Still clear and grammatical, just relaxed.`
+        : `PROFESSIONAL TONE — write like a polished status update for a manager or client:
+- Full, complete sentences in third-person or impersonal voice (avoid "I"/"we" where possible).
+- No contractions ("I have" not "I've", "did not" not "didn't").
+- Use precise engineering vocabulary ("Resolved", "Implemented", "Investigated", "Reviewed", "Deployed").
+- Confident, formal, no slang or filler. Each bullet reads as a finished deliverable.`;
 
     const system =
       mode === "weekly"
