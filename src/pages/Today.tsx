@@ -156,7 +156,6 @@ export default function Today() {
               ref={taRef}
               value={text}
               onChange={(e) => setText(e.target.value)}
-              onKeyDown={onKey}
               rows={3}
               placeholder="What did you work on? Type a quick note..."
               className="ff-input resize-none text-[15px] leading-relaxed border-0 shadow-none focus:ring-0 focus:border-transparent p-0"
@@ -210,7 +209,7 @@ export default function Today() {
               </div>
 
               <FFButton type="submit" variant="highlight" size="sm" disabled={!text.trim()}>
-                Add note <kbd className="ml-1 font-mono text-[10px] opacity-80">⌘↵</kbd>
+                Add note
               </FFButton>
             </div>
           </form>
