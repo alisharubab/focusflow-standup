@@ -82,13 +82,6 @@ export default function Today() {
     await supabase.from("notes").delete().eq("id", id);
   };
 
-  const onKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-      e.preventDefault();
-      addNote();
-    }
-  };
-
   const generate = async () => {
     if (notes.length === 0 || !user) return;
     setGenerating(true);
