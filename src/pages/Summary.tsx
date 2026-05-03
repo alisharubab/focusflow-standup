@@ -59,9 +59,8 @@ export default function Summary() {
       (weekNotes as any[] ?? []).forEach((n) => notes.push({ text: n.text, is_blocker: n.is_blocker, tag: n.project_tags?.name ?? null }));
     }
 
-    const { data: profile } = await supabase.from("profiles").select("default_tone").eq("id", user.id).maybeSingle();
     const { data, error } = await supabase.functions.invoke("generate-standup", {
-      body: { notes, tone: profile?.default_tone || "professional", format: "ytb", mode: "weekly" },
+      body: { notes, format: "ytb", mode: "weekly" },
     });
     setBusy(false);
     if (error || (data as any)?.error) { toast.error((data as any)?.error || "Failed"); return; }

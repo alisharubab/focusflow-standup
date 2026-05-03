@@ -86,7 +86,7 @@ export default function Today() {
     if (notes.length === 0 || !user) return;
     setGenerating(true);
     const { data: profile } = await supabase
-      .from("profiles").select("default_tone, standup_format, name_in_standup, full_name")
+      .from("profiles").select("standup_format, name_in_standup, full_name")
       .eq("id", user.id).maybeSingle();
 
     const payload = {
@@ -95,7 +95,6 @@ export default function Today() {
         is_blocker: n.is_blocker,
         tag: tags.find((t) => t.id === n.tag_id)?.name ?? null,
       })),
-      tone: profile?.default_tone || "professional",
       format: profile?.standup_format || "ytb",
       userName: profile?.name_in_standup ? profile?.full_name : undefined,
     };
@@ -119,7 +118,6 @@ export default function Today() {
         today: r.today || r.tomorrow || null,
         blockers: r.blockers || "None",
         highlights: r.highlights || null,
-        tone: payload.tone,
         raw_note_ids: notes.filter(n => !n.id.startsWith("tmp-")).map(n => n.id),
       })
       .select()

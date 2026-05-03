@@ -23,7 +23,7 @@ serve(async (req) => {
 
     const body = await req.json();
     const notes: NoteInput[] = Array.isArray(body?.notes) ? body.notes : [];
-    const tone: string = body?.tone === "casual" ? "casual" : "professional";
+    // Tone is fixed: all standups generate in professional tone.
     const format: string = body?.format === "ttb" ? "ttb" : "ytb";
     const userName: string | undefined = body?.userName;
     const mode: string = body?.mode === "weekly" ? "weekly" : "daily";
@@ -46,15 +46,7 @@ serve(async (req) => {
       )
       .join("\n");
 
-    const toneGuide =
-      tone === "casual"
-        ? `CASUAL TONE — write like a developer chatting in Slack with their team:
-- Use contractions ("I've", "didn't", "couldn't", "we're").
-- Use relaxed verbs like "wrapped up", "knocked out", "got blocked on", "poked at", "hopped on", "working on", "shipped".
-- Keep sentences short and punchy. First-person is fine ("I", "we").
-- Friendly and human — no corporate jargon, no stiff phrasing like "Furthermore" or "Subsequently".
-- Still clear and grammatical, just relaxed.`
-        : `PROFESSIONAL TONE — write like a polished status update for a manager or client:
+    const toneGuide = `PROFESSIONAL TONE — write like a polished status update for a manager or client:
 - Full, complete sentences in third-person or impersonal voice (avoid "I"/"we" where possible).
 - No contractions ("I have" not "I've", "did not" not "didn't").
 - Use precise engineering vocabulary ("Resolved", "Implemented", "Investigated", "Reviewed", "Deployed").
