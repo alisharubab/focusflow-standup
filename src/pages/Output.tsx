@@ -64,8 +64,9 @@ export default function Output() {
     setTimeout(() => setCopied(false), 1800);
   };
 
-  const regenerate = async () => {
+  const regenerate = async (overrideTone?: "casual" | "professional") => {
     if (!s || !user) return;
+    const useTone = overrideTone ?? tone;
     setRegen(true);
     const ids = s.raw_note_ids ?? [];
     const { data: ns } = await supabase.from("notes").select("*, project_tags(name)").in("id", ids);
@@ -75,7 +76,7 @@ export default function Output() {
     const { data, error } = await supabase.functions.invoke("generate-standup", {
       body: {
         notes,
-        tone,
+        tone: useTone,
         format: profile?.standup_format || "ytb",
         userName: profile?.name_in_standup ? profile?.full_name : undefined,
       },
@@ -83,10 +84,10 @@ export default function Output() {
     setRegen(false);
     if (error || (data as any)?.error) { toast.error((data as any)?.error || "Failed"); return; }
     const r = data as any;
-    const next = { ...s, yesterday: r.yesterday, today: r.today || r.tomorrow, blockers: r.blockers, highlights: r.highlights, tone, edited: false } as Standup;
+    const next = { ...s, yesterday: r.yesterday, today: r.today || r.tomorrow, blockers: r.blockers, highlights: r.highlights, tone: useTone, edited: false } as Standup;
     setS(next);
     await supabase.from("standups").update({
-      yesterday: next.yesterday, today: next.today, blockers: next.blockers, highlights: next.highlights, tone, edited: false
+      yesterday: next.yesterday, today: next.today, blockers: next.blockers, highlights: next.highlights, tone: useTone, edited: false
     }).eq("id", next.id);
     toast.success("Regenerated");
   };
@@ -114,7 +115,7 @@ export default function Output() {
           {(["casual", "professional"] as const).map((t) => (
             <button
               key={t}
-              onClick={() => { setTone(t); update({ tone: t }); }}
+              onClick={() => { if (t === tone || regen) return; setTone(t); regenerate(t); }}
               className={`px-3.5 py-1.5 rounded-full text-[12px] font-medium capitalize transition ${
                 tone === t ? "bg-highlight text-white shadow-ff-sm" : "text-muted-foreground hover:text-foreground"
               }`}
