@@ -29,6 +29,7 @@ export default function Settings() {
   const [original, setOriginal] = useState<Profile | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [editingTag, setEditingTag] = useState<string | null>(null);
+  const [colorPickerFor, setColorPickerFor] = useState<string | null>(null);
   const [newTagName, setNewTagName] = useState("");
   const [delConfirm, setDelConfirm] = useState<{ kind: string; text: string } | null>(null);
 
@@ -202,13 +203,24 @@ export default function Settings() {
               <div className="space-y-3">
                 {tags.map((t) => (
                   <div key={t.id} className="flex items-center gap-3 p-3 rounded-lg bg-bg-secondary">
-                    <div className="relative group">
-                      <div className="w-6 h-6 rounded-full" style={{ backgroundColor: t.color }} />
-                      <div className="absolute z-20 left-0 top-full mt-2 hidden group-hover:flex bg-white border border-border rounded-lg p-2 gap-1.5 shadow-ff-md">
-                        {SWATCHES.map((c) => (
-                          <button key={c} onClick={() => updateTag(t.id, { color: c })} className="w-5 h-5 rounded-full border border-border" style={{ backgroundColor: c }} />
-                        ))}
-                      </div>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setColorPickerFor(colorPickerFor === t.id ? null : t.id)}
+                        className="w-6 h-6 rounded-full border border-border"
+                        style={{ backgroundColor: t.color }}
+                        aria-label="Change color"
+                      />
+                      {colorPickerFor === t.id && (
+                        <>
+                          <div className="fixed inset-0 z-10" onClick={() => setColorPickerFor(null)} />
+                          <div className="absolute z-20 left-0 top-full mt-2 flex bg-white border border-border rounded-lg p-2 gap-1.5 shadow-ff-md ff-slide-up">
+                            {SWATCHES.map((c) => (
+                              <button key={c} onClick={() => { updateTag(t.id, { color: c }); setColorPickerFor(null); }} className="w-5 h-5 rounded-full border border-border" style={{ backgroundColor: c }} />
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                     {editingTag === t.id ? (
                       <input autoFocus value={t.name} onBlur={() => setEditingTag(null)}
