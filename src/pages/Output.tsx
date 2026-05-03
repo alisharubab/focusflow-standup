@@ -24,7 +24,6 @@ export default function Output() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [s, setS] = useState<Standup | null>(null);
-  const [tone, setTone] = useState<"casual" | "professional">("professional");
   const [copied, setCopied] = useState(false);
   const [regen, setRegen] = useState(false);
   const debounceRef = useRef<number | null>(null);
@@ -33,10 +32,7 @@ export default function Output() {
     if (!id || !user) return;
     supabase.from("standups").select("*").eq("id", id).single()
       .then(({ data }) => {
-        if (data) {
-          setS(data as Standup);
-          setTone((data as Standup).tone === "casual" ? "casual" : "professional");
-        }
+        if (data) setS(data as Standup);
       });
   }, [id, user]);
 
@@ -64,9 +60,8 @@ export default function Output() {
     setTimeout(() => setCopied(false), 1800);
   };
 
-  const regenerate = async (overrideTone?: "casual" | "professional") => {
+  const regenerate = async () => {
     if (!s || !user) return;
-    const useTone = overrideTone ?? tone;
     setRegen(true);
     const ids = s.raw_note_ids ?? [];
     const { data: ns } = await supabase.from("notes").select("*, project_tags(name)").in("id", ids);
@@ -76,7 +71,6 @@ export default function Output() {
     const { data, error } = await supabase.functions.invoke("generate-standup", {
       body: {
         notes,
-        tone: useTone,
         format: profile?.standup_format || "ytb",
         userName: profile?.name_in_standup ? profile?.full_name : undefined,
       },
@@ -84,10 +78,10 @@ export default function Output() {
     setRegen(false);
     if (error || (data as any)?.error) { toast.error((data as any)?.error || "Failed"); return; }
     const r = data as any;
-    const next = { ...s, yesterday: r.yesterday, today: r.today || r.tomorrow, blockers: r.blockers, highlights: r.highlights, tone: useTone, edited: false } as Standup;
+    const next = { ...s, yesterday: r.yesterday, today: r.today || r.tomorrow, blockers: r.blockers, highlights: r.highlights, edited: false } as Standup;
     setS(next);
     await supabase.from("standups").update({
-      yesterday: next.yesterday, today: next.today, blockers: next.blockers, highlights: next.highlights, tone: useTone, edited: false
+      yesterday: next.yesterday, today: next.today, blockers: next.blockers, highlights: next.highlights, edited: false
     }).eq("id", next.id);
     toast.success("Regenerated");
   };
@@ -111,20 +105,6 @@ export default function Output() {
           {new Date(s.created_at).toLocaleString(undefined, { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
         </p>
 
-        <div className="inline-flex items-center bg-bg-secondary p-1 rounded-full mb-7">
-          {(["casual", "professional"] as const).map((t) => (
-            <button
-              key={t}
-              onClick={() => { if (t === tone || regen) return; setTone(t); regenerate(t); }}
-              className={`px-3.5 py-1.5 rounded-full text-[12px] font-medium capitalize transition ${
-                tone === t ? "bg-highlight text-white shadow-ff-sm" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-
         <div className="space-y-5">
           {sections.map((sec) => (
             <div key={sec.key} className="pl-4 border-l-[3px]" style={{ borderColor: sec.color }}>
@@ -146,7 +126,7 @@ export default function Output() {
             <ArrowLeft size={14} /> Back to notes
           </button>
           <div className="flex items-center gap-2">
-            <FFButton variant="ghost" size="md" onClick={() => regenerate()} loading={regen}>
+            <FFButton variant="ghost" size="md" onClick={regenerate} loading={regen}>
               <RotateCcw size={14} /> Regenerate
             </FFButton>
             <FFButton variant="highlight" size="md" onClick={copy}>
