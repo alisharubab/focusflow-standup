@@ -122,12 +122,39 @@ export default function Settings() {
           {tab === "profile" && (
             <div className="ff-card p-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 rounded-full bg-highlight-light text-highlight flex items-center justify-center font-display text-[28px]">
-                  {initialsOf(profile.full_name, user?.email)}
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center text-[40px] border border-border"
+                  style={{ backgroundColor: avatarBg(profile.avatar_url) ?? undefined }}
+                >
+                  {profile.avatar_url || DEFAULT_AVATAR}
                 </div>
                 <div>
                   <h3 className="font-display text-[20px]">{profile.full_name || user?.email}</h3>
                   <p className="text-[13px] text-text-tertiary">{user?.email}</p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="ff-label">Avatar</label>
+                <div className="flex gap-3">
+                  {AVATARS.map((a) => {
+                    const selected = (profile.avatar_url || DEFAULT_AVATAR) === a.emoji;
+                    return (
+                      <button
+                        key={a.emoji}
+                        type="button"
+                        onClick={() => setProfile({ ...profile, avatar_url: a.emoji })}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center text-[32px] border border-border transition ${selected ? "ring-2 ring-offset-2" : "hover:scale-105"}`}
+                        style={{
+                          backgroundColor: a.bg,
+                          ...(selected ? { boxShadow: `0 0 0 2px var(--highlight)` } : {}),
+                        }}
+                        aria-label={`Select ${a.emoji}`}
+                      >
+                        {a.emoji}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
