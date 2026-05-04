@@ -147,7 +147,7 @@ export default function Settings() {
                         className={`w-16 h-16 rounded-full flex items-center justify-center text-[32px] border border-border transition ${selected ? "ring-2 ring-offset-2" : "hover:scale-105"}`}
                         style={{
                           backgroundColor: a.bg,
-                          ...(selected ? { boxShadow: `0 0 0 2px var(--highlight)` } : {}),
+                          ...(selected ? { boxShadow: `0 0 0 2px hsl(var(--highlight))` } : {}),
                         }}
                         aria-label={`Select ${a.emoji}`}
                       >
