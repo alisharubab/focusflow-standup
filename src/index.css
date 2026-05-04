@@ -157,8 +157,8 @@
   }
 
   .ff-dot-bg {
-    background-image: radial-gradient(hsl(var(--foreground) / 0.04) 1px, transparent 1px);
-    background-size: 18px 18px;
+    background-image: radial-gradient(circle, rgba(200, 199, 190, 0.5) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 }
 
