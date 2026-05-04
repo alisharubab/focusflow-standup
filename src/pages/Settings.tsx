@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import FFButton from "@/components/ff/FFButton";
 import { PageTitle } from "@/components/ff/PageTitle";
 import { Profile, Tag } from "@/types/ff";
+import { AVATARS, DEFAULT_AVATAR, avatarBg } from "@/lib/avatars";
 
 const SECTIONS = [
   { id: "profile", label: "Profile" },
@@ -55,6 +56,7 @@ export default function Settings() {
       default_tone: profile.default_tone,
       standup_format: profile.standup_format,
       name_in_standup: profile.name_in_standup,
+      avatar_url: profile.avatar_url,
     }).eq("id", user.id);
     if (error) toast.error("Couldn't save");
     else { toast.success("Saved"); setOriginal(profile); }
