@@ -116,6 +116,10 @@ export default function Output() {
           {new Date(s.created_at).toLocaleString(undefined, { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
         </p>
 
+        {(() => { const { header } = extractHeader(s.highlights); return header ? (
+          <p className="text-[14px] font-medium text-foreground mb-4">{header}</p>
+        ) : null; })()}
+
         <div className="space-y-5">
           {sections.map((sec) => (
             <div key={sec.key} className="pl-4 border-l-[3px]" style={{ borderColor: sec.color }}>
