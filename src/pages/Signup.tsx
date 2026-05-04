@@ -58,7 +58,10 @@ export default function Signup() {
       <PageTitle title="Sign up" />
       <div className="w-full max-w-[420px] bg-white rounded-xl shadow-ff-lg p-8 ff-fade-in">
         <div className="flex flex-col items-center mb-6">
-          <h1 className="font-display text-3xl text-foreground mb-2">FocusFlow</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <span style={{ fontSize: 28, lineHeight: 1 }} aria-hidden>📋</span>
+            <h1 className="font-display text-3xl text-foreground">FocusFlow</h1>
+          </div>
           <p className="text-sm text-muted-foreground text-center">Start writing better standups today.</p>
         </div>
 

@@ -4,6 +4,7 @@ import { Home, Clock, BarChart3, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/ff/Logo";
+import { DEFAULT_AVATAR, avatarBg } from "@/lib/avatars";
 
 const nav = [
   { to: "/app/today", icon: Home, label: "Today" },
@@ -30,11 +31,23 @@ export default function AppLayout() {
   const { user, signOut } = useAuth();
   const { pathname } = useLocation();
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<string>(DEFAULT_AVATAR);
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setProfileName(data?.full_name ?? null));
+    supabase.from("profiles").select("full_name,avatar_url").eq("id", user.id).maybeSingle()
+      .then(({ data }) => {
+        setProfileName(data?.full_name ?? null);
+        if (data?.avatar_url) setAvatar(data.avatar_url);
+      });
+    const channel = supabase.channel(`profile-${user.id}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
+        (payload: any) => {
+          setProfileName(payload.new?.full_name ?? null);
+          if (payload.new?.avatar_url) setAvatar(payload.new.avatar_url);
+        })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   const title = titles[pathname] || "FocusFlow";
@@ -49,8 +62,12 @@ export default function AppLayout() {
         </div>
 
         <div className="px-4 py-3 mx-3 mb-2 rounded-lg bg-white/60 border border-border flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-highlight-light text-highlight flex items-center justify-center font-medium text-[13px]">
-            {initialsOf(profileName, user?.email)}
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[18px] border border-border"
+            style={{ backgroundColor: avatarBg(avatar) ?? undefined }}
+            aria-label="Avatar"
+          >
+            {avatar}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-[13px] font-medium truncate">{profileName || "Welcome"}</div>
