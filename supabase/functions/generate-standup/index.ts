@@ -164,12 +164,19 @@ ${noteLines}`;
     }
 
     // Normalise to a stable shape regardless of format
+    const header = userName ? `Here's ${userName}'s update:` : "";
+    const aiHighlights = parsed.highlights ?? "";
+    const highlights = header
+      ? (aiHighlights ? `${header}\n\n${aiHighlights}` : header)
+      : aiHighlights;
+
     const result = {
+      header,
       yesterday: isYTB ? parsed[section1Key] ?? "" : "",
       today: parsed[isYTB ? "today" : "today"] ?? "",
       tomorrow: !isYTB ? parsed["tomorrow"] ?? "" : "",
       blockers: parsed.blockers ?? "None",
-      highlights: parsed.highlights ?? "",
+      highlights,
     };
 
     return new Response(JSON.stringify(result), {

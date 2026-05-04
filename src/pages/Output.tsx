@@ -8,14 +8,25 @@ import FFButton from "@/components/ff/FFButton";
 import { PageTitle } from "@/components/ff/PageTitle";
 import { Standup } from "@/types/ff";
 
+function extractHeader(highlights: string | null): { header: string; rest: string } {
+  if (!highlights) return { header: "", rest: "" };
+  const lines = highlights.split("\n");
+  if (lines[0]?.startsWith("Here's ") && lines[0].includes("update:")) {
+    return { header: lines[0], rest: lines.slice(1).join("\n").trim() };
+  }
+  return { header: "", rest: highlights };
+}
+
 function formatSlack(s: Standup) {
+  const { header } = extractHeader(s.highlights);
   const fmt = (label: string, body: string | null) =>
     `*${label}*\n${(body || "—").trim()}`;
-  return [
+  const body = [
     fmt("Yesterday", s.yesterday),
     fmt("Today", s.today),
     fmt("Blockers", s.blockers || "None"),
   ].join("\n\n");
+  return header ? `${header}\n\n${body}` : body;
 }
 
 export default function Output() {
@@ -104,6 +115,10 @@ export default function Output() {
         <p className="font-mono text-[12px] text-text-tertiary mb-5">
           {new Date(s.created_at).toLocaleString(undefined, { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
         </p>
+
+        {(() => { const { header } = extractHeader(s.highlights); return header ? (
+          <p className="text-[14px] font-medium text-foreground mb-4">{header}</p>
+        ) : null; })()}
 
         <div className="space-y-5">
           {sections.map((sec) => (
