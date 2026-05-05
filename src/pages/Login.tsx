@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import FFButton from "@/components/ff/FFButton";
@@ -16,6 +16,7 @@ export default function Login() {
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [howOpen, setHowOpen] = useState(false);
 
   if (!loading && session) return <Navigate to="/app/today" replace />;
 
@@ -97,6 +98,54 @@ export default function Login() {
           </Link>
         </p>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setHowOpen(true)}
+        className="mt-4 text-[13px] text-[hsl(var(--text-tertiary))] no-underline hover:underline"
+        style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
+      >
+        How it works
+      </button>
+
+      {howOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          style={{ animation: "ff-fade-in 200ms ease both" }}
+          onClick={() => setHowOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative w-full max-w-[480px] bg-white p-6"
+            style={{ borderRadius: "var(--radius-lg, 14px)", boxShadow: "var(--shadow-lg)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setHowOpen(false)}
+              aria-label="Close"
+              className="absolute right-3 top-3 p-1.5 text-muted-foreground hover:text-foreground rounded-md"
+            >
+              <X size={16} />
+            </button>
+            <h2 className="font-display text-xl text-foreground mb-5 text-center">How it works</h2>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { e: "📝", l: "Add notes", d: "Jot down what you worked on throughout the day" },
+                { e: "✨", l: "Generate standup", d: "AI formats your notes into a polished update" },
+                { e: "📋", l: "Copy to Slack", d: "Paste your standup in one click, ready to share" },
+              ].map((s) => (
+                <div key={s.l} className="flex flex-col items-center text-center">
+                  <span style={{ fontSize: 28, lineHeight: 1 }} aria-hidden>{s.e}</span>
+                  <p className="mt-2 text-[13px] font-semibold text-foreground">{s.l}</p>
+                  <p className="mt-1 text-[12px] text-muted-foreground leading-snug">{s.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
