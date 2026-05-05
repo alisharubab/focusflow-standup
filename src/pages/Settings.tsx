@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,7 +26,12 @@ function initialsOf(name?: string | null, email?: string | null) {
 
 export default function Settings() {
   const { user } = useAuth();
-  const [tab, setTab] = useState("profile");
+  const location = useLocation();
+  const [tab, setTab] = useState<string>((location.state as any)?.tab ?? "profile");
+  useEffect(() => {
+    const t = (location.state as any)?.tab;
+    if (t) setTab(t);
+  }, [location.key]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [original, setOriginal] = useState<Profile | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);

@@ -61,7 +61,12 @@ export default function AppLayout() {
           <Logo size={18} />
         </div>
 
-        <div className="px-4 py-3 mx-3 mb-2 rounded-lg bg-white/60 border border-border flex items-center gap-3">
+        <NavLink
+          to="/app/settings"
+          state={{ tab: "profile" }}
+          aria-label="Open profile settings"
+          className="px-4 py-3 mx-3 mb-2 rounded-md bg-white/60 border border-border flex items-center gap-3 cursor-pointer transition-colors duration-150 hover:bg-bg-tertiary"
+        >
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center text-[18px] border border-border"
             style={{ backgroundColor: avatarBg(avatar) ?? undefined }}
@@ -73,7 +78,7 @@ export default function AppLayout() {
             <div className="text-[13px] font-medium truncate">{profileName || "Welcome"}</div>
             <div className="text-[11px] text-text-tertiary truncate">{user?.email}</div>
           </div>
-        </div>
+        </NavLink>
 
         <nav className="flex-1 px-3 py-2 space-y-1">
           {nav.map((n) => (
