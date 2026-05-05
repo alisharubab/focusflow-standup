@@ -24,7 +24,9 @@ export default function Today() {
   const [isBlocker, setIsBlocker] = useState(false);
   const [tagOpen, setTagOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [focused, setFocused] = useState(false);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const wordCount = useMemo(() => text.trim() ? text.trim().split(/\s+/).length : 0, [text]);
 
   const load = async () => {
     if (!user) return;
@@ -147,10 +149,17 @@ export default function Today() {
               ref={taRef}
               value={text}
               onChange={(e) => setText(e.target.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
               rows={3}
               placeholder="What did you work on? Type a quick note..."
               className="ff-input resize-none text-[15px] leading-relaxed border-0 shadow-none focus:ring-0 focus:border-transparent p-0"
             />
+            {focused && wordCount > 0 && (
+              <div className="-mt-1 text-right font-mono text-[12px] text-text-tertiary">
+                {wordCount} {wordCount === 1 ? "word" : "words"}
+              </div>
+            )}
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="relative">
