@@ -63,6 +63,7 @@ export default function AppLayout() {
 
         <NavLink
           to="/app/settings"
+          state={{ tab: "profile" }}
           aria-label="Open profile settings"
           className="px-4 py-3 mx-3 mb-2 rounded-md bg-white/60 border border-border flex items-center gap-3 cursor-pointer transition-colors duration-150 hover:bg-bg-tertiary"
         >
