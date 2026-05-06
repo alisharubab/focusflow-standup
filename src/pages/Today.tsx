@@ -160,6 +160,37 @@ export default function Today() {
                 {wordCount} {wordCount === 1 ? "word" : "words"}
               </div>
             )}
+            {focused && (
+              <div
+                className="-mx-1 flex gap-2 overflow-x-auto pb-1 px-1"
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                {[
+                  "🐛 Fixed a bug",
+                  "👀 Reviewed a PR",
+                  "📅 Had a meeting",
+                  "🚀 Deployed to production",
+                  "📖 Wrote documentation",
+                  "🔧 Worked on setup/config",
+                  "🤝 Pair programmed",
+                ].map((tpl) => {
+                  const label = tpl.replace(/^\S+\s/, "");
+                  return (
+                    <button
+                      key={tpl}
+                      type="button"
+                      onClick={() => {
+                        setText((prev) => (prev.trim() ? `${prev.replace(/\s+$/, "")}\n${label}` : label));
+                        taRef.current?.focus();
+                      }}
+                      className="shrink-0 rounded-full border border-border bg-bg-secondary px-3 py-1.5 text-[12px] text-foreground transition-colors duration-150 hover:bg-highlight-light hover:text-highlight"
+                    >
+                      {tpl}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="relative">
